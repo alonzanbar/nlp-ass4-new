@@ -12,7 +12,7 @@ def extract_features(pair, doc):
     prev_tag = doc[en1.start - 1].tag_ if en1.start > 0 else 'None'
     word_dep , typed_dep_map = extract_dep_map(en1.root,en2.root,doc)
     words_set = set([t.lemma_ for t in doc[start:end]])
-    consitutient_path = (get_parse_tree_path(doc.text, en1.root.text, en2.root.text))
+    #consitutient_path = (get_parse_tree_path(doc.text, en1.root.text, en2.root.text))
     features = {
 
         'entity1-type': en1.label,
@@ -29,9 +29,9 @@ def extract_features(pair, doc):
         'word-after-entity2': next_word,
         'dep-path': typed_dep_map,
         'word-dep-path' : word_dep,
-        'dis_ent_distance': len(typed_dep_map) / 3,
+        'dis_ent_distance': len(typed_dep_map) / 2,
         'between-entities-word': words_set,
-        'consitutient_path': consitutient_path
+        #'consitutient_path': consitutient_path
 
     }
 

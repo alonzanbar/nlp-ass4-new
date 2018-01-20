@@ -45,8 +45,8 @@ def read_annotated_line(line,is_test):
 
 def save_html(lines,file):
     options = {'ents': ['PERSON', 'LOC', 'GPE']}
-    entity_renderer = EntityRendererEX(options=options)
-    parsed = [render_ex.parse_ents(doc, options) for doc in lines]
+    #entity_renderer = EntityRendererEX(options=options)
+    #parsed = [render_ex.parse_ents(doc, options) for doc in lines]
     html = entity_renderer.render(parsed)
     open(file, 'w').write(html)
 
