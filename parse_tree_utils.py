@@ -26,9 +26,9 @@ def get_parse_tree_path(sent_str,word1,word2):
     if leaf1 is None or  leaf2 is None:
         return []
     path1,path2 = find_path(leaf1,leaf2)
-    dir_path1 = intersperse([pt[a].label() for a in path1], '-u-')
-    dir_path2 = intersperse([pt[a].label() for a in path2],'-d-')
-    dir_path2.insert(0,'-d-')
+    dir_path1 = [pt[a].label()+'-u-' for a in path1]
+    dir_path2 = [pt[a].label()+'-d-' for a in path2]
+
     return dir_path1+dir_path2
 
 def find_path(leaf1,leaf2):
@@ -65,30 +65,42 @@ def find_leaf(pt, word):
             for child in c:
                 st.append(child)
 
+def find_dep_path(leaf1,leaf2):
+    parent1 = leaf1
+    parent2 = leaf2
+    path1=[]
+    path2=[]
+    while True:
+        path1.append(parent1.i)
+        if parent1 == parent1.head:
+            break
+        parent1 = parent1.head
+    p2id = {k:v for v,k in enumerate(path1)}
+    while True:
+        p2position = parent2.i
+        if parent2.i in p2id:
+           return path1,list(reversed(path2))
+        path2.append(parent2.i)
+        if parent2 == parent2.head:
+            break
+        parent2 = parent2.head
+    return [],[]
 
-def extract_dep_map(en1,en2,doc, graph):
-    path = []
-    try:
-        path = nx.shortest_path(graph, source=en1.root.i, target=en2.root.i)
-    except (exception.NetworkXNoPath, exception.NodeNotFound) as e:
-        pass
-        logging.error(e.message)
-    typed_dep_map = []
-    dep_map = []
-    for i, token_id in enumerate(path):
+
+def extract_dep_map(en1,en2,doc):
+    uppath, downpath = find_dep_path(en1,en2)
+    words_arr = []
+    dep_arr = []
+    for token_id in uppath:
         token = doc[token_id]
-        level = []
-        dirc = 'up'
-        typed_dep_map.append(token.text)
-        if i > 0:
-            next_token = doc[path[i - 1]]
-            if token.head == next_token:
-                dirc = 'down'
-            level.append(dirc)
-            level.append(token.dep_)
-            dep_map.extend(level)
-            typed_dep_map.extend(level)
-    return dep_map, typed_dep_map
+        words_arr.append(token.lemma_+'-up')
+        dep_arr.append(token.dep_+"-up")
+    for i in range(1,len(downpath)):
+        token = doc[downpath[i]]
+        words_arr.append(token.lemma_ + '-down')
+        dep_arr.append(token.dep_ + "-down")
+
+    return words_arr, dep_arr
 
 if __name__=="__main__":
     sentences = 0

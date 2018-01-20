@@ -5,13 +5,13 @@ import pickle
 import sys
 from ExtractFeatures import get_DEV_pairs, extract_features_pairs, get_TEST_pairs, read_sentences_from_annotated
 
-from utils import load_map, convert_features, PERSON, save_file
+from utils import load_map, convert_features, save_file, PERSON_STRS
 
 LIVE_IN = "Live_In"
 
 def get_en_type_from_pair(pair):
     for en in pair[0]:
-        if en.label_ == PERSON:
+        if en.label_ in PERSON_STRS:
             p_en = en
         else:
             loc_en = en

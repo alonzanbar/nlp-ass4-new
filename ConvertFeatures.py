@@ -29,7 +29,7 @@ def save_words(F2I,f_file,output_q_file,map_file):
 
 def convert_line(F2I, label_str,features_str_arr):
     label = str(F2I[label_str])
-    features = sorted([F2I[i] for i in features_str_arr])
+    features = sorted(set([F2I[i] for i in features_str_arr]))
     return label,features
 
 

@@ -8,7 +8,7 @@ from spacy.matcher import Matcher
 from FeatureBuilder import extract_features
 from annotated_sentence import sentence
 from parse_tree_utils import get_parse_tree_path
-from utils import PERSON, LOCTATION_STRS, LIVE_IN, nlp
+from utils import  LOCTATION_STRS, LIVE_IN, nlp, PERSON_STRS
 
 NUMBER_NRG = 5
 
@@ -16,13 +16,16 @@ def format_token(token):
     return '{0}-{1}'.format(token.lower_, token.tag_)
 
 
-def process_file(infile):
+def process_file(infile,output_file):
     samples=[]
-    for sent in read_sentences_from_annotated(infile).itervalues():
-        pairs = get_TRAIN_pairs(sent)
-        pair_samples = extract_features_pairs(sent.nlpsent, pairs)
-        samples.extend(pair_samples)
-    return samples
+    with open(output_file, 'w') as outfile:
+        for sent in read_sentences_from_annotated(infile).itervalues():
+            pairs = get_TRAIN_pairs(sent)
+            pair_samples = extract_features_pairs(sent.nlpsent, pairs)
+            samples.extend(pair_samples)
+            for label, features in samples:
+                outfile.write(str(label) + '\t' + '\t'.join(features) + "\n")
+
 
 def read_sentences_from_annotated(fname):
     lines_dic={}
@@ -45,7 +48,7 @@ def extract_features_pairs(doc, pairs):
         features_dict = extract_features(pair, doc)
         features=[]
         for k, v in features_dict.items():
-            if isinstance(v,set):
+            if isinstance(v,set) or isinstance(v,list):
                 for it in v:
                     features.append("{0}={1}".format(k, it))
             else:
@@ -54,15 +57,12 @@ def extract_features_pairs(doc, pairs):
     return samples
 
 
-def save_words(output_file,samples):
-    with open(output_file, 'w') as outfile:
-        for label,features in samples:
-                 outfile.write(str(label) +'\t' + '\t'.join(features)+"\n")
+
 
 def get_TRAIN_pairs(sent):
     for ann in sent.annotations:
         if ann.rel == LIVE_IN:
-            replace_en(sent.get_nlpsent(),ann.en1,[PERSON])
+            replace_en(sent.get_nlpsent(),ann.en1,PERSON_STRS)
             replace_en(sent.get_nlpsent(),ann.en2, LOCTATION_STRS)
     pairs = get_pairs_supervised(sent)
     return pairs
@@ -81,8 +81,8 @@ def get_all_pairs(doc):
         for en_id2 in range(en_id1, len(doc.ents)):
             en1 = doc.ents[en_id1]
             en2 = doc.ents[en_id2]
-            if (en1.label_ == PERSON and en2.label_ in LOCTATION_STRS) or \
-                    (en1.label_ in LOCTATION_STRS and en2.label_ == PERSON):
+            if (en1.label_ in  PERSON_STRS and en2.label_ in LOCTATION_STRS) or \
+                    (en1.label_ in LOCTATION_STRS and en2.label_ in PERSON_STRS):
                 pairs.append(([en1, en2], 0))
     return pairs
 
@@ -128,5 +128,4 @@ def replace_en(doc,str,labels):
 if __name__ == "__main__":
     infile = sys.argv[1]
     outfile = sys.argv[2]
-    samples= process_file(infile)
-    save_words(outfile,samples)
+    samples= process_file(infile,outfile)
