@@ -7,9 +7,8 @@ from spacy.matcher import Matcher
 
 from FeatureBuilder import extract_features
 from annotated_sentence import sentence
-from temp_code.spc import read_sentences_from_annotated, nlp
 from parse_tree_utils import get_parse_tree_path
-from utils import PERSON, LOCTATION_STRS, LIVE_IN
+from utils import PERSON, LOCTATION_STRS, LIVE_IN, nlp
 
 NUMBER_NRG = 5
 

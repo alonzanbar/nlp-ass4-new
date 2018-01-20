@@ -1,5 +1,7 @@
 import logging
 import numpy as np
+import spacy
+nlp = spacy.load('en')
 
 PERSON = 'PERSON'
 LOCTATION_STRS = ['LOC','GPE']
