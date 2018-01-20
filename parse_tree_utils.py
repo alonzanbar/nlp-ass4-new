@@ -95,8 +95,8 @@ def extract_dep_map(en1,en2,doc):
         token = doc[token_id]
         words_arr.append(token.lemma_+'-up')
         dep_arr.append(token.dep_+"-up")
-    for i in range(1,len(downpath)):
-        token = doc[downpath[i]]
+    for token_id in downpath:
+        token = doc[token_id]
         words_arr.append(token.lemma_ + '-down')
         dep_arr.append(token.dep_ + "-down")
 
