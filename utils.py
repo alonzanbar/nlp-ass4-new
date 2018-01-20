@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 
-PERSON_STR = ['PERSON','ORG']
+PERSON = 'PERSON'
 LOCTATION_STRS = ['LOC','GPE']
 LIVE_IN = "Live_In"
 logging.basicConfig(filename='example.log',level=logging.INFO)

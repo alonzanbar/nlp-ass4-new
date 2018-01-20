@@ -3,15 +3,15 @@ import logging
 import scipy
 import pickle
 import sys
-from ExtractPairs import get_DEV_pairs, extract_features_pairs, get_TEST_pairs, read_sentences_from_annotated
+from ExtractFeatures import get_DEV_pairs, extract_features_pairs, get_TEST_pairs, read_sentences_from_annotated
 
-from utils import load_map, convert_features, PERSON_STR, save_file
+from utils import load_map, convert_features, PERSON, save_file
 
 LIVE_IN = "Live_In"
 
 def get_en_type_from_pair(pair):
     for en in pair[0]:
-        if en.label_ in PERSON_STR:
+        if en.label_ == PERSON:
             p_en = en
         else:
             loc_en = en
@@ -22,15 +22,10 @@ def predict(model,featuremap,test_file_name):
     rev_featuremap = {v:k for k,v in featuremap.items()}
     match = total_preds = total_true =  0.0
     for sent_id, sent in read_sentences_from_annotated(test_file_name).iteritems():
-        live_num= 0
-        for rel in sent.relations:
-            if  LIVE_IN == rel:
-                live_num+=1
-        if live_num==0:
+
+        if not LIVE_IN in  sent.relations:
             continue
-        total_true+=live_num
         print ("\n----------------------------")
-        print(sent.sent)
         for ann in sent.annotations:
             print (ann)
         doc =sent.get_nlpsent()
@@ -44,20 +39,16 @@ def predict(model,featuremap,test_file_name):
             pred_str = rev_featuremap[str(int(pred[0]))]
             if pred_str=='1': # if we predict current pair includes the relation
                 p_en,loc_en = get_en_type_from_pair(pairs[i])
-                print("predicted : entity 1: {} , entity2 : {}".format(p_en,loc_en))
                 predictions.append((sent_id, p_en, LIVE_IN, loc_en, sent.sent))
                 if str(y)=='1': # if this pair was tagged with the relation
                     logging.info(sent_id + " " + sent.sent)
-                    print("match !")
                     match+=1
-
                 total_preds+=1
             total_true+=1 if y==1 else 0
 
     prec = match / total_preds
     recall = match / total_true
     f1 = 2 * prec * recall / (prec + recall)
-    print("total_true: {}, total_preds: {}, match: {}".format(total_true,total_preds,match))
     print("prec : {}, recall : {}, f1 : {}".format(prec, recall, f1))
     return predictions
 

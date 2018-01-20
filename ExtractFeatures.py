@@ -1,11 +1,15 @@
 import logging
 import re
 import sys
+
+from collections import defaultdict
+from spacy.matcher import Matcher
+
 from FeatureBuilder import extract_features
 from annotated_sentence import sentence
 from temp_code.spc import read_sentences_from_annotated, nlp
-from utils import PERSON_STR, LOCTATION_STRS, LIVE_IN
-import yappi
+from parse_tree_utils import get_parse_tree_path
+from utils import PERSON, LOCTATION_STRS, LIVE_IN
 
 NUMBER_NRG = 5
 
@@ -59,7 +63,7 @@ def save_words(output_file,samples):
 def get_TRAIN_pairs(sent):
     for ann in sent.annotations:
         if ann.rel == LIVE_IN:
-            replace_en(sent.get_nlpsent(), ann.en1, PERSON_STR)
+            replace_en(sent.get_nlpsent(),ann.en1,[PERSON])
             replace_en(sent.get_nlpsent(),ann.en2, LOCTATION_STRS)
     pairs = get_pairs_supervised(sent)
     return pairs
@@ -78,8 +82,8 @@ def get_all_pairs(doc):
         for en_id2 in range(en_id1, len(doc.ents)):
             en1 = doc.ents[en_id1]
             en2 = doc.ents[en_id2]
-            if (en1.label_ in PERSON_STR and en2.label_ in LOCTATION_STRS) or \
-                    (en1.label_ in LOCTATION_STRS and en2.label_ in PERSON_STR):
+            if (en1.label_ == PERSON and en2.label_ in LOCTATION_STRS) or \
+                    (en1.label_ in LOCTATION_STRS and en2.label_ == PERSON):
                 pairs.append(([en1, en2], 0))
     return pairs
 
@@ -93,7 +97,7 @@ def get_pairs_supervised(sent):
             if ann.rel==LIVE_IN and ((ne1.text == ann.en1 and ne2.text == ann.en2) or \
                     (ne1.text == ann.en2 and ne2.text == ann.en1)):
                 label=1
-                print ("found : entity1 : {}, entity2 : {}".format(ne1,ne2) )
+                print ("found")
 
         pairs.append(([ne1, ne2], label))
     return pairs
@@ -125,7 +129,5 @@ def replace_en(doc,str,labels):
 if __name__ == "__main__":
     infile = sys.argv[1]
     outfile = sys.argv[2]
-    yappi.start()
     samples= process_file(infile)
     save_words(outfile,samples)
-    yappi.get_func_stats().print_all()
