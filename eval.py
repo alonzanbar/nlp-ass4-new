@@ -28,7 +28,7 @@ def extract_pred_lines(file,lines):
     bad_lines=[]
     good_lines=[]
     for sent in open(file, 'r'):
-        line = sent.strip('\n').split("\t")
+        line = sent.strip('\n').strip(".").split("\t")
 
         nlpline = nlp(unicode(sent[sent.find("(") + 1:sent.find(")")]))
         nlpline.user_data = {'title':"\t".join([line[0],line[1], line[2], line[3]])}
@@ -44,9 +44,9 @@ def get_set_vec(goldfile):
     sentvec = defaultdict(list)
     sum_s=0.0
     for sent in open(goldfile,'r'):
-        line = sent.strip('\n').split("\t")
+        line = sent.strip('\n').strip('.').strip(" ").split("\t")
         if (line[2]=="Live_In"):
-            sentvec[line[0]].append("\t".join([line[0],line[1], line[2], line[3]]))
+            sentvec[line[0]].append("\t".join([line[0].strip("the").strip('.').strip(" "),line[1].strip("the").strip('.').strip(" "), line[2].strip('.').strip(" "), line[3].strip("the").strip('.').strip(" ")]))
             sum_s+=1
     return sentvec,sum_s
 
