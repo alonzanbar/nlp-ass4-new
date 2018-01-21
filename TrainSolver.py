@@ -8,7 +8,7 @@ from sklearn.datasets import load_svmlight_file
 def train_model(in_file):
     X, Y = load_svmlight_file(in_file)
 
-    model = LogisticRegression(max_iter=1000)
+    model = LogisticRegression()
     model.fit(X, Y)
     correct=0.0
     for v,x in enumerate(X):

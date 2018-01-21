@@ -16,16 +16,13 @@ def format_token(token):
     return '{0}-{1}'.format(token.lower_, token.tag_)
 
 
-def process_file(infile,output_file):
+def process_file(infile):
     samples=[]
-    with open(output_file, 'w') as outfile:
-        for sent in read_sentences_from_annotated(infile).itervalues():
-            pairs = get_TRAIN_pairs(sent)
-            pair_samples = extract_features_pairs(sent.nlpsent, pairs)
-            samples.extend(pair_samples)
-            for label, features in samples:
-                outfile.write(str(label) + '\t' + '\t'.join(features) + "\n")
-
+    for sent in read_sentences_from_annotated(infile).itervalues():
+        pairs = get_TRAIN_pairs(sent)
+        pair_samples = extract_features_pairs(sent.nlpsent, pairs)
+        samples.extend(pair_samples)
+    return samples
 
 def read_sentences_from_annotated(fname):
     lines_dic={}
@@ -57,7 +54,10 @@ def extract_features_pairs(doc, pairs):
     return samples
 
 
-
+def save_words(output_file,samples):
+    with open(output_file, 'w') as outfile:
+        for label,features in samples:
+                 outfile.write(str(label) +'\t' + '\t'.join(features)+"\n")
 
 def get_TRAIN_pairs(sent):
     for ann in sent.annotations:
@@ -128,4 +128,5 @@ def replace_en(doc,str,labels):
 if __name__ == "__main__":
     infile = sys.argv[1]
     outfile = sys.argv[2]
-    samples= process_file(infile,outfile)
+    samples= process_file(infile)
+    save_words(outfile,samples)

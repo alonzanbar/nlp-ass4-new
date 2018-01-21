@@ -77,7 +77,6 @@ def find_dep_path(leaf1,leaf2):
         parent1 = parent1.head
     p2id = {k:v for v,k in enumerate(path1)}
     while True:
-        p2position = parent2.i
         if parent2.i in p2id:
            return path1,list(reversed(path2))
         path2.append(parent2.i)
@@ -89,18 +88,19 @@ def find_dep_path(leaf1,leaf2):
 
 def extract_dep_map(en1,en2,doc):
     uppath, downpath = find_dep_path(en1,en2)
-    words_arr = []
-    dep_arr = []
+    dep_arr=[]
+    if len(uppath)==0:
+        return [(None,None,None)]
     for token_id in uppath:
         token = doc[token_id]
-        words_arr.append(token.lemma_+'-up')
-        dep_arr.append(token.dep_+"-up")
+        dir='-up'
+        dep_arr.append((token.lemma_+dir,token.dep_+dir,token.tag_+dir))
     for token_id in downpath:
         token = doc[token_id]
-        words_arr.append(token.lemma_ + '-down')
-        dep_arr.append(token.dep_ + "-down")
+        dir = '-down'
+        dep_arr.append((token.lemma_ + dir, token.dep_ + dir, token.tag_+dir))
 
-    return words_arr, dep_arr
+    return  dep_arr
 
 if __name__=="__main__":
     sentences = 0
