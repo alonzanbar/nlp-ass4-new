@@ -33,15 +33,12 @@ def convert_line(F2I, label_str,features_str_arr):
     return label,features
 
 
-def main(args):
-    if (len(args)<3):
-        print("wrong args")
-        return
-    F2I = load_features(args[1])
-    save_words(F2I,args[1],args[2],args[3])
+def convert(features_file,feature_vecs_file,map_file):
+    F2I = load_features(features_file)
+    save_words(F2I,features_file,feature_vecs_file,map_file)
 
 if __name__ == "__main__":
-    main(sys.argv)
+    convert(sys.argv[1],sys.argv[2],sys.argv[3])
     # dir = os.path.dirname(os.path.realpath('__file__'))
     # filename = os.path.join(dir, 'output.text')
     # load_features(filename)

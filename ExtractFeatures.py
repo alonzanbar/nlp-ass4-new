@@ -128,8 +128,11 @@ def replace_en(doc,str,labels):
 
 
 
+def extract(infile,outfile):
+    samples = process_file(infile)
+    save_words(outfile, samples)
+
 if __name__ == "__main__":
     infile = sys.argv[1]
     outfile = sys.argv[2]
-    samples= process_file(infile)
-    save_words(outfile,samples)
+    extract(infile,outfile)

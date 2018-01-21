@@ -3,7 +3,7 @@ import numpy as np
 import spacy
 nlp = spacy.load('en')
 
-PERSON_STRS = ['PERSON']
+PERSON_STRS = ['PERSON','ORG']
 LOCTATION_STRS = ['LOC','GPE']
 LIVE_IN = "Live_In"
 logging.basicConfig(filename='example.log',level=logging.INFO)

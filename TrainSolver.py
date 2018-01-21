@@ -19,13 +19,13 @@ def train_model(in_file):
 def save_model(out_file,model):
     pickle.dump(model, open(out_file, 'wb'))
 
-def main(args):
-    model = train_model(args[1])
-    save_model(args[2],model)
+def train(features_vecs,model_file):
+    model = train_model(features_vecs)
+    save_model(model_file,model)
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    train(sys.argv[1],sys.argv[2])
     # in_file = get_abs_file('..\\out\\feature_map')
     # model_file = ('..\\out\\model_test1')
     # main(["",in_file,model_file])

@@ -67,6 +67,16 @@ def predict_test(model,featuremap,test_file):
                 predictions.append((sent_id, p_en, rel, loc_en, sent_str))
     return predictions
 
+def predict_main(model_file_name,map_file_name,test_file_name,out_file,predict_type):
+    model = pickle.load(open(model_file_name, 'rb'))
+
+    featuremap = load_map(map_file_name)
+    if predict_type:
+        predictions = predict(model, featuremap, test_file_name)
+    else:
+        predictions = predict_test(model, featuremap, test_file_name)
+
+    save_file(out_file, predictions)
 
 if __name__=="__main__":
     model_file_name=  sys.argv[1]
@@ -74,13 +84,4 @@ if __name__=="__main__":
     test_file_name = sys.argv[3]
     out_file  = sys.argv[4]
     predict_type = sys.argv[5] if len(sys.argv)>5 else None
-
-    model  = pickle.load(open(model_file_name, 'rb'))
-
-    featuremap = load_map(map_file_name)
-    if predict_type:
-        predictions  = predict(model,featuremap,test_file_name)
-    else:
-        predictions = predict_test(model,featuremap,test_file_name)
-
-    save_file(out_file,predictions)
+    predict(model_file_name, map_file_name, test_file_name, out_file, predict_type)
