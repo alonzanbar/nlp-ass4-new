@@ -31,7 +31,7 @@ def extract_pred_lines(file,lines):
         line = sent.strip('\n').strip(".").split("\t")
 
         nlpline = nlp(unicode(sent[sent.find("(") + 1:sent.find(")")]))
-        nlpline.user_data = {'title':"\t".join([line[0],line[1], line[2], line[3]])}
+        nlpline.user_data = {'title':"\t".join(line[:4])}
 
 
         if line[0] in lines:
@@ -46,7 +46,7 @@ def get_set_vec(goldfile):
     for sent in open(goldfile,'r'):
         line = sent.strip('\n').strip('.').strip(" ").split("\t")
         if (line[2]=="Live_In"):
-            sentvec[line[0]].append("\t".join([line[0].strip("the").strip('.').strip(" "),line[1].strip("the").strip('.').strip(" "), line[2].strip('.').strip(" "), line[3].strip("the").strip('.').strip(" ")]))
+            sentvec[line[0]].append("\t".join([w.strip(".") for w in line[0:4]]))
             sum_s+=1
     return sentvec,sum_s
 
@@ -65,4 +65,4 @@ def eval_main(goldfile,predfile):
 if __name__ == '__main__':
     goldfile = sys.argv[1]
     predfile = sys.argv[2]
-    eval(goldfile,predfile)
+    eval_main(goldfile,predfile)

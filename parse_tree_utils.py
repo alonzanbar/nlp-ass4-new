@@ -41,9 +41,8 @@ def find_path(leaf1,leaf2):
         parent1 = parent1.parent()
     p2id = {k:v for v,k in enumerate(path1)}
     while parent2:
-        p2position = parent2.treeposition()
         if parent2.treeposition() in p2id:
-           return path1[1:p2id[p2position]+1],list(reversed(path2[1:]))
+           return path1,list(reversed(path2[1:]))
         path2.append(parent2.treeposition())
         parent2 = parent2.parent()
 

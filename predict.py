@@ -9,12 +9,14 @@ from utils import load_map, convert_features, save_file, PERSON_STRS
 
 LIVE_IN = "Live_In"
 
-def get_en_type_from_pair(pair):
+def get_en_type_from_pair(pair,doc):
     for en in pair[0]:
         if en.label_ in PERSON_STRS:
-            p_en = en
+            p_en = en.text
+            if en.end == len(doc) - 1:
+                p_en+="."
         else:
-            loc_en = en
+            loc_en = en.text
     return p_en,loc_en
 
 def predict(model,featuremap,test_file_name):
@@ -38,7 +40,7 @@ def predict(model,featuremap,test_file_name):
             pred = model.predict(v)
             pred_str = rev_featuremap[str(int(pred[0]))]
             if pred_str=='1': # if we predict current pair includes the relation
-                p_en,loc_en = get_en_type_from_pair(pairs[i])
+                p_en,loc_en = get_en_type_from_pair(pairs[i],doc)
                 predictions.append((sent_id, p_en, LIVE_IN, loc_en, sent.sent))
                 if str(y)=='1': # if this pair was tagged with the relation
                     logging.info(sent_id + " " + sent.sent)

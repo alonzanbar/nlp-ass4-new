@@ -12,7 +12,7 @@ def extract_features(pair, doc):
     prev_tag = doc[en1.start - 1].tag_ if en1.start > 0 else 'None'
     typed_dep_map = extract_dep_map(en1.root,en2.root,doc)
     word_dep , type_dep , tag_dep = zip(*typed_dep_map)
-    words_set = set([t.lemma_ for t in doc[start:end]])
+    words_list = [t.lemma_ for t in doc[start:end]]
     systactic_after = [w.tag_ for w in doc[end+1:]] if end+1<len(doc) else None
     #consitutient_path = (get_parse_tree_path(doc.text, en1.root.text, en2.root.text))
     features = {
@@ -34,7 +34,9 @@ def extract_features(pair, doc):
         'word-dep-path' : list(word_dep),
         'tag-dep-path' : list(tag_dep),
         'dis_ent_distance': len(type_dep) / 2,
-        'between-entities-word': words_set,
+        'between-entities-word_set': set(words_list),
+        'between-entities-word_concat': "-".join(words_list),
+
         #'consitutient_path': consitutient_path
 
     }

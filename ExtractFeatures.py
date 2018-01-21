@@ -109,10 +109,11 @@ def replace_en(doc,str,labels):
     try:
         start, end  = sent_words.index(gold_words[0]),sent_words.index(gold_words[len(gold_words)-1])+1
     except ValueError:
-        logging.info("found bad title : "+str)
+
         try:
-            start, end = sent_words.index(gold_words[0].strip(".")), sent_words.index(gold_words[len(gold_words) - 1]) + 1
+            start, end = sent_words.index(gold_words[0].strip(".")), sent_words.index(gold_words[len(gold_words) - 1].strip(".")) + 1
         except ValueError:
+            logging.info("found bad title : " + str)
             return
     span = None
     for en in doc.ents:
